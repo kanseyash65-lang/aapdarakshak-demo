@@ -2,7 +2,7 @@ import React from 'react'
 import EmergancyButton from './EmergancyButton'
 import HelpOption from './HelpOption'
 
-const EmergancySection = ({onEmergencyClick}) => {
+const EmergancySection = ({user, onEmergencyClick}) => {
   return (
     <div className='bg-gray-800/80 backdrop-blur-md rounded-3xl p-8 mb-8 shadow-2xl border border-white/10 relative overflow-hidden'>
         <div className='absolute -inset-24 bg-red-500/10 animate-pulse-slowctrnsform rotate-45'></div>
@@ -12,7 +12,7 @@ const EmergancySection = ({onEmergencyClick}) => {
                 In immediate danger? Press the button to alert nearby responders instantly. no login requiered.
             </p>
 
-            <EmergancyButton onClick={onEmergencyClick}/>
+            <EmergancyButton userId={user?.id}/>
             <HelpOption/>
         </div>
     </div>

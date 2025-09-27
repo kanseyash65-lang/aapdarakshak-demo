@@ -29,7 +29,7 @@ const App = () => {
     <div>
       <div>
         <Header/>
-      <EmergancySection onEmergencyClick={()=> setShowEmergencyAlert(true)}/>
+      <EmergancySection user={user} onEmergencyClick={() => setShowEmergencyAlert(true)} />
       <CommunitySection 
        user={user}
        onHelpRequest={() => {
