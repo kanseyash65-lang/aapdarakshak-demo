@@ -22,16 +22,7 @@ AapdaRakshak is a community-driven emergency response web app. With one click, a
  </br>
  Help Request Form – Allows users to describe their emergency.
 
- 🚧 Features in Progress
- </br>
-Profile Page – Manage user details and history.
-</br>
-Request Dashboard – Track incoming/outgoing help requests.
-</br>
-Notification System – Instant alerts for responders.
-</br>
-Settings Page – Personalize preferences.
-</br>
+
 
 
 🛠️ Tech Stack
