@@ -32,7 +32,7 @@ Notification System – Instant alerts for responders.
 </br>
 Settings Page – Personalize preferences.
 </br>
-Backend Integration – For real-time updates and database storage.
+
 
 🛠️ Tech Stack
 
