@@ -29,6 +29,6 @@ AapdaRakshak is a community-driven emergency response web app. With one click, a
 
 Frontend: React + Vite + TailwindCSS
 
-Auth/Database (Planned): Firebase
+Auth/Database: Firebase
 
 
