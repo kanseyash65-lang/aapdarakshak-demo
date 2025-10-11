@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import EmergancySection from './components/EmergancySection';
 import CommunitySection from './components/CommunitySection';
@@ -9,6 +9,8 @@ import ResponderMap from './components/ResponderMap';
 import FloatingResponderButton from './components/FloatingResponderButton';
 import AuthModal from './components/AuthModal';
 import HelpRequestForm from './components/HelpRequestForm';
+import Notification from './components/Notification'; // Import the Notification component
+import { registerForPush, onForegroundMessage } from './utils/notifications';
 
 const App = () => {
   // UI state management
@@ -19,6 +21,26 @@ const App = () => {
 
   // logged-in user (null = guest)
   const [user, setUser] = useState(null);
+
+  // Notification state
+  const [notification, setNotification] = useState(null);
+
+  const showNotification = (message, type) => {
+    setNotification({ message, type });
+  };
+
+  useEffect(() => {
+    registerForPush();
+
+    const unsubscribe = onForegroundMessage((payload) => {
+      console.log('Foreground message received:', payload);
+      // You can show a custom in-app notification here
+      showNotification(payload.notification.body, 'success');
+    });
+
+    return () => unsubscribe();
+  }, []);
+
 
   // handle login and open help form
   const handleLogin = (userData) => {
@@ -35,6 +57,7 @@ const App = () => {
       <EmergancySection
         user={user}
         onEmergencyClick={() => setShowEmergencyAlert(true)}
+        showNotification={showNotification}
       />
 
       <CommunitySection
@@ -79,6 +102,14 @@ const App = () => {
           isOpen={showHelpRequest}
           onClose={() => setShowHelpRequest(false)}
           user={user}
+        />
+      )}
+      
+      {notification && (
+        <Notification
+          message={notification.message}
+          type={notification.type}
+          onClose={() => setNotification(null)}
         />
       )}
     </div>
