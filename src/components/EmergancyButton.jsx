@@ -1,13 +1,12 @@
-// src/components/EmergancyButton.jsx
 import { BellIcon } from '@heroicons/react/24/solid';
 import React from 'react';
 import { ref as dbRef, push, set } from 'firebase/database';
 import { db } from '../utils/firebase';
 
-const EmergancyButton = ({ userId }) => {
+const EmergancyButton = ({ userId, showNotification }) => {
   const sendLocation = () => {
     if (!("geolocation" in navigator)) {
-      alert("Geolocation not supported by your browser");
+      showNotification("Geolocation not supported by your browser", "error");
       return;
     }
 
@@ -16,27 +15,25 @@ const EmergancyButton = ({ userId }) => {
         const { latitude, longitude } = pos.coords;
         const timestamp = new Date().toISOString();
 
-        // push to RTDB under "emergencies"
         const newRef = push(dbRef(db, "emergencies"));
         set(newRef, {
           userId: userId || "anonymous",
-          // keys the map expects:
           lat: latitude,
           lng: longitude,
           createdAt: timestamp,
         })
           .then(() => {
             console.log("Location sent to Firebase");
-            alert("🚨 Emergency location sent!");
+            showNotification("🚨 Emergency location sent!", "success");
           })
           .catch((err) => {
             console.error("Error writing to Firebase:", err);
-            alert("Failed to send location.");
+            showNotification("Failed to send location.", "error");
           });
       },
       (error) => {
         console.error("Geolocation error:", error);
-        alert("Could not get location: " + error.message);
+        showNotification("Could not get location: " + error.message, "error");
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
