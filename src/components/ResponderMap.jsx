@@ -64,7 +64,7 @@ const ResponderMap = ({ onClose, isOpen, user }) => {
     }
     if (!responderName) {
       // ask once, optional; if user cancels leave as 'Anonymous'
-      const n = prompt('Enter name to display to victim/responders (optional)', ''); 
+      const n = prompt('Enter name to display to victim/responders (optional)', '');
       responderName = n ? n.trim() : 'Anonymous';
       localStorage.setItem('responderName', responderName);
     }
@@ -165,6 +165,21 @@ const ResponderMap = ({ onClose, isOpen, user }) => {
       unsubscribe();
     };
   }, [user]); // user included so identity-based behavior remains consistent across user change
+
+  // This useEffect will automatically update the selectedEmergency details
+  // whenever the main activeEmergencies list changes from the database.
+  useEffect(() => {
+    if (!selectedEmergency) {
+      return;
+    }
+    const freshEmergencyData = activeEmergencies.find(e => e.id === selectedEmergency.id);
+    if (freshEmergencyData) {
+      setSelectedEmergency(freshEmergencyData);
+    } else {
+      // If the emergency is no longer in the active list, close the modal.
+      setSelectedEmergency(null);
+    }
+  }, [activeEmergencies]);
 
   if (!isOpen) return null;
 
@@ -280,7 +295,11 @@ const ResponderMap = ({ onClose, isOpen, user }) => {
           {/* Selected emergency modal */}
           {selectedEmergency && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <div className="bg-gray-800 rounded-3xl p-6 w-full max-w-md">
+              <div
+                className="absolute inset-0 bg-black/50"
+                onClick={() => setSelectedEmergency(null)}
+              />
+              <div className="bg-gray-800 rounded-3xl p-6 w-full max-w-md relative">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-red-300">Emergency Details</h3>
                   <button onClick={() => setSelectedEmergency(null)} className="text-gray-400 hover:text-white">
@@ -306,14 +325,12 @@ const ResponderMap = ({ onClose, isOpen, user }) => {
                   <div className="flex space-x-3 pt-4">
                     <button
                       onClick={async () => {
+                        const wasResponding = isCurrentResponding(selectedEmergency);
                         await toggleRespond(selectedEmergency);
-                        // reload selection details (small delay so DB updates reflect)
-                        setTimeout(async () => {
-                          // pull latest from state by id
-                          const fresh = activeEmergencies.find(e => e.id === selectedEmergency.id);
-                          if (fresh) setSelectedEmergency(fresh);
-                          else setSelectedEmergency(null);
-                        }, 500);
+
+                        if (wasResponding) {
+                          onClose();
+                        }
                       }}
                       className="flex-1 bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-xl transition-colors"
                     >
